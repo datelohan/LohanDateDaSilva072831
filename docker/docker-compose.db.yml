@@ -1,0 +1,19 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: seletivo_db
+    environment:
+      MYSQL_DATABASE: seletivo
+      MYSQL_USER: seletivo
+      MYSQL_PASSWORD: seletivo123
+      MYSQL_ROOT_PASSWORD: rootseletivo123
+
+    ports:
+      - "3307:3306"
+    volumes:
+      - seletivo_mysqldata:/var/lib/mysql
+
+
+
+volumes:
+  seletivo_mysqldata:

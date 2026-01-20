@@ -1,7 +1,0 @@
-CREATE TABLE album (
-  id BIGINT NOT NULL AUTO_INCREMENT,
-  titulo VARCHAR(200) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
-  UNIQUE KEY uk_album_titulo (titulo)
-);

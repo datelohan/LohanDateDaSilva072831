@@ -1,7 +1,0 @@
-CREATE TABLE artista(
-id BIGINT NOT NULL AUTO_INCREMENT,
-nome varchar(200) NOT NULL,
-created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
- PRIMARY KEY (id),
-  UNIQUE KEY uk_artista_nome (nome)
-);

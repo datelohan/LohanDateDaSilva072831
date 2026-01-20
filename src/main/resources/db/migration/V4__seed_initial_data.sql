@@ -1,38 +1,38 @@
--- Artistas
-INSERT INTO artista (nome) VALUES
-('Serj Tankian'),
-('Mike Shinoda'),
-('Michel Teló'),
-('Guns N'' Roses');
+-- Artists
+INSERT INTO artists (name) VALUES
+                               ('Serj Tankian'),
+                               ('Mike Shinoda'),
+                               ('Michel Teló'),
+                               ('Guns N'' Roses');
 
--- Álbuns
-INSERT INTO album (titulo) VALUES
-('Harakiri'),
-('Post Traumatic'),
-('Bem Sertanejo'),
-('Appetite for Destruction');
+-- Albums
+INSERT INTO albums (title) VALUES
+                               ('Harakiri'),
+                               ('Post Traumatic'),
+                               ('Bem Sertanejo'),
+                               ('Appetite for Destruction');
 
--- Relações (N:N) usando SELECT pra evitar depender de IDs
-INSERT INTO artista_album (artista_id, album_id)
+-- Relationships (N:N) using SELECT to avoid relying on IDs
+INSERT INTO artist_album (artist_id, album_id)
 SELECT a.id, al.id
-FROM artista a
-JOIN album al
-WHERE a.nome = 'Serj Tankian' AND al.titulo = 'Harakiri';
+FROM artists a
+         JOIN albums al
+WHERE a.name = 'Serj Tankian' AND al.title = 'Harakiri';
 
-INSERT INTO artista_album (artista_id, album_id)
+INSERT INTO artist_album (artist_id, album_id)
 SELECT a.id, al.id
-FROM artista a
-JOIN album al
-WHERE a.nome = 'Mike Shinoda' AND al.titulo = 'Post Traumatic';
+FROM artists a
+         JOIN albums al
+WHERE a.name = 'Mike Shinoda' AND al.title = 'Post Traumatic';
 
-INSERT INTO artista_album (artista_id, album_id)
+INSERT INTO artist_album (artist_id, album_id)
 SELECT a.id, al.id
-FROM artista a
-JOIN album al
-WHERE a.nome = 'Michel Teló' AND al.titulo = 'Bem Sertanejo';
+FROM artists a
+         JOIN albums al
+WHERE a.name = 'Michel Teló' AND al.title = 'Bem Sertanejo';
 
-INSERT INTO artista_album (artista_id, album_id)
+INSERT INTO artist_album (artist_id, album_id)
 SELECT a.id, al.id
-FROM artista a
-JOIN album al
-WHERE a.nome = 'Guns N'' Roses' AND al.titulo = 'Appetite for Destruction';
+FROM artists a
+         JOIN albums al
+WHERE a.name = 'Guns N'' Roses' AND al.title = 'Appetite for Destruction';

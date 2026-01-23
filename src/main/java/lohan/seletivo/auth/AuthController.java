@@ -80,7 +80,11 @@ public class AuthController {
         }
 
         String accessToken = jwtService.generateAccessToken(userDetails);
+        String newRefreshToken = jwtService.generateRefreshToken(userDetails);
+        refreshTokenService.revoke(storedToken);
+        OffsetDateTime newExpiresAt = OffsetDateTime.ofInstant(jwtService.extractExpiration(newRefreshToken), ZoneOffset.UTC);
+        refreshTokenService.create(storedToken.getUser(), newRefreshToken, newExpiresAt);
         long expiresInSeconds = securityProperties.getJwt().getAccessTokenTtl().toSeconds();
-        return new TokenResponse(accessToken, token, expiresInSeconds);
+        return new TokenResponse(accessToken, newRefreshToken, expiresInSeconds);
     }
 }

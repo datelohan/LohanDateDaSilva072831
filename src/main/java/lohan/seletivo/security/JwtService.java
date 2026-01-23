@@ -50,11 +50,16 @@ public class JwtService {
         return expiration != null ? expiration.toInstant() : null;
     }
 
+    public String extractTokenId(String token) {
+        return extractAllClaims(token).getId();
+    }
+
     private String generateToken(UserDetails userDetails, long ttlSeconds, String type) {
         Instant now = Instant.now();
         Instant expiry = now.plusSeconds(ttlSeconds);
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .setId(java.util.UUID.randomUUID().toString())
                 .setIssuer(properties.getJwt().getIssuer())
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expiry))

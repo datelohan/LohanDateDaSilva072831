@@ -23,8 +23,11 @@ public class RefreshToken {
     @JoinColumn(name = "user_id", nullable = false)
     private UserAccount user;
 
-    @Column(nullable = false, length = 500, unique = true)
-    private String token;
+    @Column(name = "token_id", nullable = false, length = 36, unique = true)
+    private String tokenId;
+
+    @Column(name = "token_hash", nullable = false, length = 255)
+    private String tokenHash;
 
     @Column(name = "expires_at", nullable = false)
     private OffsetDateTime expiresAt;
@@ -51,12 +54,20 @@ public class RefreshToken {
         this.user = user;
     }
 
-    public String getToken() {
-        return token;
+    public String getTokenId() {
+        return tokenId;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setTokenId(String tokenId) {
+        this.tokenId = tokenId;
+    }
+
+    public String getTokenHash() {
+        return tokenHash;
+    }
+
+    public void setTokenHash(String tokenHash) {
+        this.tokenHash = tokenHash;
     }
 
     public OffsetDateTime getExpiresAt() {

@@ -45,6 +45,11 @@ public class JwtService {
         return extractAllClaims(token).getSubject();
     }
 
+    public Instant extractExpiration(String token) {
+        Date expiration = extractAllClaims(token).getExpiration();
+        return expiration != null ? expiration.toInstant() : null;
+    }
+
     private String generateToken(UserDetails userDetails, long ttlSeconds, String type) {
         Instant now = Instant.now();
         Instant expiry = now.plusSeconds(ttlSeconds);

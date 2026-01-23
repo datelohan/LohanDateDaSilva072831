@@ -10,7 +10,6 @@ public class SecurityProperties {
 
     private final Cors cors = new Cors();
     private final Jwt jwt = new Jwt();
-    private final User user = new User();
     private final RateLimit rateLimit = new RateLimit();
 
     public Cors getCors() {
@@ -19,10 +18,6 @@ public class SecurityProperties {
 
     public Jwt getJwt() {
         return jwt;
-    }
-
-    public User getUser() {
-        return user;
     }
 
     public RateLimit getRateLimit() {
@@ -104,36 +99,6 @@ public class SecurityProperties {
 
         public void setIssuer(String issuer) {
             this.issuer = issuer;
-        }
-    }
-
-    public static class User {
-        private String username = "admin";
-        private String password = "admin123";
-        private List<String> roles = List.of("USER");
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public List<String> getRoles() {
-            return roles;
-        }
-
-        public void setRoles(List<String> roles) {
-            this.roles = roles;
         }
     }
 

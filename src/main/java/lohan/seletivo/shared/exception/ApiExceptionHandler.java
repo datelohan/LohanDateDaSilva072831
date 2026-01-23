@@ -2,6 +2,7 @@ package lohan.seletivo.shared.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -56,6 +57,13 @@ public class ApiExceptionHandler {
         }
         return ResponseEntity.badRequest().body(
                 ApiError.of(400, "Bad Request", message, req.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleAuthentication(AuthenticationException ex, HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                ApiError.of(401, "Unauthorized", "Credenciais invalidas", req.getRequestURI())
         );
     }
 

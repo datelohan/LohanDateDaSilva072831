@@ -14,7 +14,7 @@ public class Artist {
     @Column(name = "name", nullable = false, length = 120)
     private String name;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = ArtistTypeConverter.class)
     @Column(name = "type", nullable = false, length = 20)
     private ArtistType type;
 

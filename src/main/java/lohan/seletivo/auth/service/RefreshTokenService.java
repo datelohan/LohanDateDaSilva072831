@@ -6,7 +6,6 @@ import lohan.seletivo.auth.repository.RefreshTokenRepository;
 import lohan.seletivo.security.JwtService;
 import lohan.seletivo.user.model.UserAccount;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -15,14 +14,14 @@ public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
+    private final TokenHashService tokenHashService;
 
     public RefreshTokenService(RefreshTokenRepository refreshTokenRepository,
             JwtService jwtService,
-            PasswordEncoder passwordEncoder) {
+            TokenHashService tokenHashService) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
+        this.tokenHashService = tokenHashService;
     }
 
     public RefreshToken create(UserAccount user, String token, OffsetDateTime expiresAt) {
@@ -33,7 +32,7 @@ public class RefreshTokenService {
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);
         refreshToken.setTokenId(tokenId);
-        refreshToken.setTokenHash(passwordEncoder.encode(token));
+        refreshToken.setTokenHash(tokenHashService.hash(token));
         refreshToken.setExpiresAt(expiresAt);
         return refreshTokenRepository.save(refreshToken);
     }
@@ -52,7 +51,7 @@ public class RefreshTokenService {
         if (refreshToken.getExpiresAt().isBefore(OffsetDateTime.now())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token expirado");
         }
-        if (!passwordEncoder.matches(token, refreshToken.getTokenHash())) {
+        if (!tokenHashService.matches(token, refreshToken.getTokenHash())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token invalido");
         }
 

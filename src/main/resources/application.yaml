@@ -29,3 +29,9 @@ app:
       issuer: "seletivo-api"
     rate-limit:
       requests-per-minute: 10
+  minio:
+    endpoint: "http://localhost:9000"
+    access-key: "minioadmin"
+    secret-key: "minioadmin"
+    bucket: "album-covers"
+    presigned-ttl: 30m

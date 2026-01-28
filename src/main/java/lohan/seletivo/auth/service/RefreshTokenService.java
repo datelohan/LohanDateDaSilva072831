@@ -27,7 +27,7 @@ public class RefreshTokenService {
     public RefreshToken create(UserAccount user, String token, OffsetDateTime expiresAt) {
         String tokenId = jwtService.extractTokenId(token);
         if (tokenId == null || tokenId.isBlank()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token invalido");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh tok xvscsen invalido");
         }
         RefreshToken refreshToken = new RefreshToken();
         refreshToken.setUser(user);

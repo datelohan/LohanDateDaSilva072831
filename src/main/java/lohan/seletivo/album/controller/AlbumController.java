@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lohan.seletivo.album.dto.AlbumArtistResponse;
 import lohan.seletivo.album.dto.AlbumCreateRequest;
+import lohan.seletivo.album.dto.AlbumImageResponse;
 import lohan.seletivo.album.dto.AlbumResponse;
 import lohan.seletivo.album.dto.AlbumUpdateRequest;
 import lohan.seletivo.album.model.Album;
+import lohan.seletivo.album.service.AlbumImageService;
 import lohan.seletivo.album.service.AlbumService;
 import lohan.seletivo.artist.model.ArtistType;
 import org.springframework.data.domain.Page;
@@ -25,15 +27,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/albums")
 public class AlbumController {
 
     private final AlbumService albumService;
+    private final AlbumImageService albumImageService;
 
-    public AlbumController(AlbumService albumService) {
+    public AlbumController(AlbumService albumService, AlbumImageService albumImageService) {
         this.albumService = albumService;
+        this.albumImageService = albumImageService;
     }
 
     @PostMapping
@@ -50,6 +55,18 @@ public class AlbumController {
     @GetMapping("/{id}")
     public AlbumResponse getById(@PathVariable Long id) {
         return toResponse(albumService.getById(id));
+    }
+
+    @PostMapping(path = "/{id}/covers", consumes = "multipart/form-data")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<AlbumImageResponse> uploadCovers(@PathVariable Long id,
+            @RequestParam("files") List<MultipartFile> files) {
+        return albumImageService.upload(id, files);
+    }
+
+    @GetMapping("/{id}/covers")
+    public List<AlbumImageResponse> listCovers(@PathVariable Long id) {
+        return albumImageService.list(id);
     }
 
     @GetMapping

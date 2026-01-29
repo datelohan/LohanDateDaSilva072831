@@ -12,6 +12,7 @@ import lohan.seletivo.security.JwtService;
 import lohan.seletivo.security.SecurityProperties;
 import lohan.seletivo.user.model.UserAccount;
 import lohan.seletivo.user.repository.UserRepository;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +27,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@SecurityRequirements
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;

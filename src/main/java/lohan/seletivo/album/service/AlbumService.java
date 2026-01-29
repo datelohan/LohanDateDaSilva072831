@@ -54,6 +54,10 @@ public class AlbumService {
         return albumRepository.search(tipo, normalizedTitle, pageable);
     }
 
+    public Page<Album> listDetails(String titulo, ArtistType tipo, Pageable pageable) {
+        return list(titulo, tipo, pageable);
+    }
+
     private Set<Artist> loadArtists(Set<Long> ids) {
         if (ids == null || ids.isEmpty()) {
             return new LinkedHashSet<>();

@@ -1,6 +1,7 @@
 package lohan.seletivo.artist.controller;
 
 import lohan.seletivo.artist.dto.ArtistCreateRequest;
+import lohan.seletivo.artist.dto.ArtistDetailResponse;
 import lohan.seletivo.artist.dto.ArtistResponse;
 import lohan.seletivo.artist.dto.ArtistUpdateRequest;
 import lohan.seletivo.artist.model.ArtistType;
@@ -46,5 +47,19 @@ public class ArtistController {
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
     ) {
         return artistService.list(q, type, pageable);
+    }
+
+    @GetMapping("/details")
+    public Page<ArtistDetailResponse> listDetails(
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) ArtistType type,
+            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC) Pageable pageable
+    ) {
+        return artistService.listDetails(q, type, pageable);
+    }
+
+    @GetMapping("/details/{id}")
+    public ArtistDetailResponse getDetails(@PathVariable Long id) {
+        return artistService.getDetails(id);
     }
 }

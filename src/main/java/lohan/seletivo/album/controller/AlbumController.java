@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lohan.seletivo.album.dto.AlbumArtistResponse;
 import lohan.seletivo.album.dto.AlbumCreateRequest;
+import lohan.seletivo.album.dto.AlbumDetailResponse;
 import lohan.seletivo.album.dto.AlbumImageResponse;
 import lohan.seletivo.album.dto.AlbumResponse;
 import lohan.seletivo.album.dto.AlbumUpdateRequest;
@@ -57,6 +58,22 @@ public class AlbumController {
         return toResponse(albumService.getById(id));
     }
 
+    @GetMapping("/details")
+    public Page<AlbumDetailResponse> listDetails(
+            @RequestParam(name = "titulo", required = false) String titulo,
+            @RequestParam(name = "tipo", required = false) String tipo,
+            @PageableDefault(size = 10)
+            @SortDefault.SortDefaults(@SortDefault(sort = "title")) Pageable pageable
+    ) {
+        ArtistType artistType = tipo != null ? ArtistType.fromValue(tipo) : null;
+        return albumService.listDetails(titulo, artistType, pageable).map(this::toDetailResponse);
+    }
+
+    @GetMapping("/details/{id}")
+    public AlbumDetailResponse getDetails(@PathVariable Long id) {
+        return toDetailResponse(albumService.getById(id));
+    }
+
     @PostMapping(path = "/{id}/covers", consumes = "multipart/form-data")
     @ResponseStatus(HttpStatus.CREATED)
     public List<AlbumImageResponse> uploadCovers(@PathVariable Long id,
@@ -96,6 +113,28 @@ public class AlbumController {
                 buildAlbumUrl(album.getId()),
                 album.getCreatedAt(),
                 artistas
+        );
+    }
+
+    private AlbumDetailResponse toDetailResponse(Album album) {
+        List<AlbumArtistResponse> artistas = album.getArtists().stream()
+                .map(artist -> new AlbumArtistResponse(
+                        artist.getId(),
+                        artist.getName(),
+                        artist.getType(),
+                        buildArtistUrl(artist.getId())
+                ))
+                .collect(Collectors.toList());
+
+        List<AlbumImageResponse> capas = albumImageService.list(album.getId());
+
+        return new AlbumDetailResponse(
+                album.getId(),
+                album.getTitle(),
+                buildAlbumUrl(album.getId()),
+                album.getCreatedAt(),
+                artistas,
+                capas
         );
     }
 

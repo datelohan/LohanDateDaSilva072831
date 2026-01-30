@@ -21,17 +21,23 @@ public class AlbumService {
 
     private final AlbumRepository albumRepository;
     private final ArtistRepository artistRepository;
+    private final AlbumNotificationService albumNotificationService;
 
-    public AlbumService(AlbumRepository albumRepository, ArtistRepository artistRepository) {
+    public AlbumService(AlbumRepository albumRepository,
+            ArtistRepository artistRepository,
+            AlbumNotificationService albumNotificationService) {
         this.albumRepository = albumRepository;
         this.artistRepository = artistRepository;
+        this.albumNotificationService = albumNotificationService;
     }
 
     public Album create(AlbumCreateRequest request) {
         Album album = new Album();
         album.setTitle(request.titulo());
         album.setArtists(loadArtists(request.artistIds()));
-        return albumRepository.save(album);
+        Album saved = albumRepository.save(album);
+        albumNotificationService.notifyAlbumCreated(saved);
+        return saved;
     }
 
     public Album update(Long id, AlbumUpdateRequest request) {

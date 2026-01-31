@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -76,6 +78,28 @@ public class ApiExceptionHandler {
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body(
                 ApiError.of(409, "Conflict", message, req.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(PropertyReferenceException.class)
+    public ResponseEntity<ApiError> handlePropertyReference(PropertyReferenceException ex, HttpServletRequest req) {
+        String message = "Ordenacao invalida. Campo nao existe: " + ex.getPropertyName();
+        return ResponseEntity.badRequest().body(
+                ApiError.of(400, "Bad Request", message, req.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(InvalidDataAccessApiUsageException.class)
+    public ResponseEntity<ApiError> handleInvalidDataAccess(InvalidDataAccessApiUsageException ex, HttpServletRequest req) {
+        Throwable cause = ex.getCause();
+        if (cause instanceof PropertyReferenceException pr) {
+            String message = "Ordenacao invalida. Campo nao existe: " + pr.getPropertyName();
+            return ResponseEntity.badRequest().body(
+                    ApiError.of(400, "Bad Request", message, req.getRequestURI())
+            );
+        }
+        return ResponseEntity.badRequest().body(
+                ApiError.of(400, "Bad Request", "Requisicao invalida", req.getRequestURI())
         );
     }
 

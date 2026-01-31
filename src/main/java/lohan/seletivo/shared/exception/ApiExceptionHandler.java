@@ -10,6 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -100,6 +101,14 @@ public class ApiExceptionHandler {
         }
         return ResponseEntity.badRequest().body(
                 ApiError.of(400, "Bad Request", "Requisicao invalida", req.getRequestURI())
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiError> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest req) {
+        String message = "Parametro invalido: " + ex.getName();
+        return ResponseEntity.badRequest().body(
+                ApiError.of(400, "Bad Request", message, req.getRequestURI())
         );
     }
 

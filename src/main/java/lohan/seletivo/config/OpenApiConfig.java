@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(
-        info = @Info(title = "Seletivo SEPLAG - Engenheiro da Computacao"),
+        info = @Info(title = "Seletivo SEPLAG - Engenharia da Computacao"),
         security = @SecurityRequirement(name = "bearerAuth")
 )
 @SecurityScheme(

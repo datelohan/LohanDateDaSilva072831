@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lohan.seletivo.artist.dto.ArtistCreateRequest;
@@ -72,8 +73,11 @@ public class ArtistController {
     public Page<ArtistResponse> list(
             @Parameter(description = "Filtro por nome", example = "Mike")
             @RequestParam(required = false) String q,
-            @Parameter(description = "Tipo do artista", example = "CANTOR")
-            @RequestParam(required = false) ArtistType type,
+            @Parameter(
+                    description = "Tipo do artista",
+                    schema = @Schema(allowableValues = {"CANTOR", "BANDA"})
+            )
+            @RequestParam(required = false) String type,
             @Parameter(description = "Pagina (0-based)", example = "0")
             @RequestParam(name = "page", defaultValue = "0") int page,
             @Parameter(description = "Tamanho da pagina", example = "10")
@@ -82,7 +86,8 @@ public class ArtistController {
             @RequestParam(name = "sort", required = false) String sort
     ) {
         Pageable pageable = buildPageable(page, size, sort, "name");
-        return artistService.list(q, type, pageable);
+        ArtistType artistType = type != null ? ArtistType.fromValue(type) : null;
+        return artistService.list(q, artistType, pageable);
     }
 
     @GetMapping("/details")
@@ -90,8 +95,11 @@ public class ArtistController {
     public Page<ArtistDetailResponse> listDetails(
             @Parameter(description = "Filtro por nome", example = "Serj")
             @RequestParam(required = false) String q,
-            @Parameter(description = "Tipo do artista", example = "CANTOR")
-            @RequestParam(required = false) ArtistType type,
+            @Parameter(
+                    description = "Tipo do artista",
+                    schema = @Schema(allowableValues = {"CANTOR", "BANDA"})
+            )
+            @RequestParam(required = false) String type,
             @Parameter(description = "Pagina (0-based)", example = "0")
             @RequestParam(name = "page", defaultValue = "0") int page,
             @Parameter(description = "Tamanho da pagina", example = "10")
@@ -100,7 +108,8 @@ public class ArtistController {
             @RequestParam(name = "sort", required = false) String sort
     ) {
         Pageable pageable = buildPageable(page, size, sort, "name");
-        return artistService.listDetails(q, type, pageable);
+        ArtistType artistType = type != null ? ArtistType.fromValue(type) : null;
+        return artistService.listDetails(q, artistType, pageable);
     }
 
     @GetMapping("/details/{id}")

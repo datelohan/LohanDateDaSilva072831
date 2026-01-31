@@ -1,0 +1,60 @@
+services:
+  db:
+    image: mysql:8.4
+    container_name: seletivo_db
+    environment:
+      MYSQL_DATABASE: seletivo
+      MYSQL_USER: seletivo
+      MYSQL_PASSWORD: seletivo123
+      MYSQL_ROOT_PASSWORD: rootseletivo123
+    ports:
+      - "3307:3306"
+    volumes:
+      - seletivo_mysqldata:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pseletivo123"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:RELEASE.2024-11-07T00-52-20Z
+    container_name: seletivo_minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - seletivo_minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: seletivo_api
+    depends_on:
+      db:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://db:3306/seletivo?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: seletivo
+      DB_PASSWORD: seletivo123
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET: album-covers
+      MINIO_PRESIGNED_TTL: 30m
+    ports:
+      - "8080:8080"
+
+volumes:
+  seletivo_mysqldata:
+  seletivo_minio_data:

@@ -156,3 +156,4 @@ Arquivos em `src/main/resources/db/migration`:
 
 Se algo ficar pendente, explicarei aqui (priorizacao e motivo).
 
+ALTERADO

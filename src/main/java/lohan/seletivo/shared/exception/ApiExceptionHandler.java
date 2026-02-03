@@ -114,7 +114,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleGeneric(Exception ex, HttpServletRequest req) {
-        // em prod: loga o ex; aqui devolve genérico
+        ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 ApiError.of(500, "Internal Server Error", "Unexpected error", req.getRequestURI())
         );

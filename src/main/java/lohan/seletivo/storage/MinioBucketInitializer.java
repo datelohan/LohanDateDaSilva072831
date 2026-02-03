@@ -4,6 +4,7 @@ import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +13,8 @@ public class MinioBucketInitializer {
     private final MinioClient minioClient;
     private final MinioProperties properties;
 
-    public MinioBucketInitializer(MinioClient minioClient, MinioProperties properties) {
+    public MinioBucketInitializer(@Qualifier("minioInternalClient") MinioClient minioClient,
+                                  MinioProperties properties) {
         this.minioClient = minioClient;
         this.properties = properties;
     }

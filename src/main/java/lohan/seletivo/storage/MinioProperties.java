@@ -10,7 +10,9 @@ public class MinioProperties {
     private String accessKey;
     private String secretKey;
     private String bucket;
+
     private Duration presignedTtl = Duration.ofMinutes(30);
+    private String publicEndpoint;
 
     public String getEndpoint() {
         return endpoint;
@@ -50,5 +52,13 @@ public class MinioProperties {
 
     public void setPresignedTtl(Duration presignedTtl) {
         this.presignedTtl = presignedTtl;
+    }
+
+    public String getPublicEndpoint() {
+        return publicEndpoint != null && !publicEndpoint.isBlank() ? publicEndpoint : endpoint;
+    }
+
+    public void setPublicEndpoint(String publicEndpoint) {
+        this.publicEndpoint = publicEndpoint;
     }
 }

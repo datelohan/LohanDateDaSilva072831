@@ -15,6 +15,7 @@ import lohan.seletivo.album.model.Album;
 import lohan.seletivo.album.model.AlbumImage;
 import lohan.seletivo.album.repository.AlbumImageRepository;
 import lohan.seletivo.storage.MinioProperties;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,16 +26,19 @@ public class AlbumImageService {
 
     private final AlbumService albumService;
     private final AlbumImageRepository albumImageRepository;
-    private final MinioClient minioClient;
+    private final MinioClient minioInternalClient;
+    private final MinioClient minioPublicClient;
     private final MinioProperties minioProperties;
 
     public AlbumImageService(AlbumService albumService,
             AlbumImageRepository albumImageRepository,
-            MinioClient minioClient,
+            @Qualifier("minioInternalClient") MinioClient minioInternalClient,
+            @Qualifier("minioPublicClient") MinioClient minioPublicClient,
             MinioProperties minioProperties) {
         this.albumService = albumService;
         this.albumImageRepository = albumImageRepository;
-        this.minioClient = minioClient;
+        this.minioInternalClient = minioInternalClient;
+        this.minioPublicClient = minioPublicClient;
         this.minioProperties = minioProperties;
     }
 
@@ -64,7 +68,7 @@ public class AlbumImageService {
         String objectKey = buildObjectKey(album.getId(), originalName);
 
         try (InputStream inputStream = file.getInputStream()) {
-            minioClient.putObject(PutObjectArgs.builder()
+            minioInternalClient.putObject(PutObjectArgs.builder()
                     .bucket(minioProperties.getBucket())
                     .object(objectKey)
                     .contentType(file.getContentType())
@@ -105,7 +109,7 @@ public class AlbumImageService {
     private String buildPresignedUrl(String objectKey) {
         try {
             int expirySeconds = (int) minioProperties.getPresignedTtl().toSeconds();
-            return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
+            return minioPublicClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                     .method(Method.GET)
                     .bucket(minioProperties.getBucket())
                     .object(objectKey)

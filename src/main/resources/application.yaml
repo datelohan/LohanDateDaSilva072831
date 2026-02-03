@@ -35,6 +35,7 @@ app:
     secret-key: ${MINIO_SECRET_KEY:minioadmin}
     bucket: ${MINIO_BUCKET:album-covers}
     presigned-ttl: ${MINIO_PRESIGNED_TTL:30m}
+    public-endpoint: ${MINIO_PUBLIC_ENDPOINT:http://localhost:9000}
 
 management:
   endpoints:

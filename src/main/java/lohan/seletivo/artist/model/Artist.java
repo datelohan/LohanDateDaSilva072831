@@ -8,7 +8,7 @@ import java.time.OffsetDateTime;
 public class Artist {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // MySQL auto_increment
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Long id;
 
     @Column(name = "name", nullable = false, length = 120)
@@ -35,8 +35,7 @@ public class Artist {
     void preUpdate() {
         this.updatedAt = OffsetDateTime.now();
     }
-
-    // getters/setters (ou Lombok se estiver usando)
+    
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

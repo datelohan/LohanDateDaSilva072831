@@ -8,7 +8,7 @@ public class ArtistTypeConverter implements AttributeConverter<ArtistType, Strin
 
     @Override
     public String convertToDatabaseColumn(ArtistType attribute) {
-        return attribute != null ? attribute.name() : null;
+        return attribute != null ? attribute.getJsonValue() : null;
     }
 
     @Override

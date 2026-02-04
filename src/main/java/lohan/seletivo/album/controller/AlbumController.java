@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -90,7 +91,8 @@ public class AlbumController {
     public Page<AlbumDetailResponse> listDetails(
             @Parameter(description = "Filtro por titulo", example = "Harakiri")
             @RequestParam(name = "titulo", required = false) String titulo,
-            @Parameter(description = "Tipo do artista (filtra albuns)", example = "CANTOR")
+            @Parameter(description = "Tipo do artista (filtra albuns)",
+                    schema = @Schema(allowableValues = {"CANTOR", "BANDA"}, example = "CANTOR"))
             @RequestParam(name = "tipo", required = false) String tipo,
             @Parameter(description = "Pagina (0-based)", example = "0")
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -147,7 +149,8 @@ public class AlbumController {
     public Page<AlbumResponse> list(
             @Parameter(description = "Filtro por titulo", example = "Harakiri")
             @RequestParam(name = "titulo", required = false) String titulo,
-            @Parameter(description = "Tipo do artista (filtra albuns)", example = "CANTOR")
+            @Parameter(description = "Tipo do artista (filtra albuns)",
+                    schema = @Schema(allowableValues = {"CANTOR", "BANDA"}, example = "CANTOR"))
             @RequestParam(name = "tipo", required = false) String tipo,
             @Parameter(description = "Pagina (0-based)", example = "0")
             @RequestParam(name = "page", defaultValue = "0") int page,

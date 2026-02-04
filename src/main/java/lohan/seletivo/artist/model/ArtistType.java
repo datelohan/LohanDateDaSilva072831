@@ -26,8 +26,8 @@ public enum ArtistType {
         }
         String normalized = value.trim().toUpperCase(Locale.ROOT);
         return switch (normalized) {
-            case "CANTOR", "SINGER" -> SINGER;
-            case "BANDA", "BAND" -> BAND;
+            case "CANTOR" -> SINGER;
+            case "BANDA" -> BAND;
             default -> throw new IllegalArgumentException("Tipo de artista invalido: " + value);
         };
     }

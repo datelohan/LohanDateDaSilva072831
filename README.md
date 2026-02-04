@@ -30,6 +30,37 @@ Servicos:
 - MinIO Console: http://localhost:9001 (user: minioadmin / pass: minioadmin)
 - MySQL: localhost:3307 (user: seletivo / pass: seletivo123)
 
+### Estrutura do projeto (resumo)
+```
+src/main/java/lohan/seletivo
+  ├─ auth           # login/refresh
+  ├─ security       # JWT, filtros, rate limit
+  ├─ album          # controllers, services, repos e DTOs de álbuns
+  ├─ artist         # controllers, services, repos e DTOs de artistas
+  ├─ storage        # MinIO config/inicialização
+  ├─ regional       # integração e sync de regionais
+  ├─ websocket      # STOMP para novos álbuns
+  ├─ health         # liveness/readiness
+  └─ shared         # exceções, utilidades
+src/main/resources/db/migration # Migrations Flyway
+docker-compose.yml             # API + MySQL + MinIO
+Dockerfile                     # build da imagem da API
+```
+
+Arquitetura adotada: **camadas** com agrupamento por domínio  
+- Controller → Service → Repository/Model  
+- Domínios separados (album, artist, regional) e módulos transversais (auth, security, storage, websocket)  
+- Configurações e concerns comuns isolados (health, shared)
+
+### Passo a passo
+1) Instale Docker Desktop e deixe rodando.  
+2) No diretório do projeto, execute: `docker compose up --build`  
+3) Aguarde os containers subirem (API, DB, MinIO).  
+4) Acesse o Swagger: `http://localhost:8080/swagger-ui/index.html`  
+5) Faça login em `/api/v1/auth/login` (admin / admin123) e clique em **Authorize** com o access token.  
+6) Use as rotas de artistas/álbuns normalmente.  
+7) Para sair, `docker compose down` (use `-v` se quiser limpar volumes/dados).
+
 ---
 
 ## Como executar local (sem Docker)
@@ -56,7 +87,7 @@ POST /api/v1/auth/login
 
 Resposta:
 - `accessToken` (expira em 5 min)
-- `refreshToken` (rotaciona a cada refresh)
+- `refreshToken` (rotaciona a cada refresh; somente o mais recente é válido)
 
 Refresh:
 ```
@@ -134,8 +165,8 @@ Topico: `/topic/albums`
 ```
 
 Testes incluidos:
-- `ArtistTypeTest` (conversao de CANTOR/BANDA)
 - `AlbumServiceTest` (criar album + erro de artista inexistente)
+- `ArtistServiceTest` (filtros por nome/tipo chamando o repositório correto)
 
 ---
 
@@ -152,7 +183,7 @@ Arquivos em `src/main/resources/db/migration`:
 ## Observacoes finais
 - O Swagger esta aberto sem autenticacao para facilitar testes.  
 - O endpoint `/api/v1/health/**` tambem eh publico.  
+- Refresh: cada chamada a `/auth/refresh` gera um novo par de tokens; guarde o refresh mais recente.  
+- Nao ha endpoints de DELETE porque o edital nao solicitou.  
 - Se o endpoint de regionais estiver fora, a aplicacao **nao falha** no startup.
-
-Se algo ficar pendente, explicarei aqui (priorizacao e motivo).
 

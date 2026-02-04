@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lohan.seletivo.artist.dto.ArtistCreateRequest;
 import lohan.seletivo.artist.dto.ArtistDetailResponse;
 import lohan.seletivo.artist.dto.ArtistResponse;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/artists")
+@Tag(name = "01 - Artistas")
 public class ArtistController {
 
     private final ArtistService artistService;

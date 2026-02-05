@@ -50,6 +50,13 @@ cd LohanDateDaSilva072831
 4. Clicar em **Authorize** e colar o `accessToken`
 5. Testar rotas de artistas/álbuns/capas.
 
+Portas usadas (padrão):
+- API: **8080** (http://localhost:8080)
+- MySQL: **3307** → 3306 (container)
+- MinIO API: **9000** (http://localhost:9000)
+- MinIO Console: **9001** (http://localhost:9001)
+- Lembre-se de verificar se estas rotas estao livres
+
 ### Comandos essenciais (Docker Compose)
 - Subir tudo: `docker compose up --build`
 - Parar: `docker compose down`

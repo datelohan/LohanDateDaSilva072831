@@ -9,7 +9,7 @@ API REST para gerenciamento de **artistas** e **albuns**, com seguranca JWT, upl
 - [Stack e tecnologias](#stack-e-tecnologias)
 - [Pré-requisitos](#pre-requisitos)
 - [Clonar o projeto](#clonar-o-projeto)
-- [Rodar em 60 segundos (Docker)](#rodar-em-60-segundos-docker)
+- [Passo a passo rápido (Docker)](#passo-a-passo-rapido-docker)
 - [Execução detalhada](#como-executar-com-docker-compose)
 - [Execução local sem Docker](#como-executar-local-sem-docker)
 - [Autenticação (login/refresh)](#autenticacao)
@@ -43,22 +43,19 @@ git clone https://github.com/datelohan/LohanDateDaSilva072831.git
 cd LohanDateDaSilva072831
 ```
 
-## Rodar  (Docker)
+## Execução do projeto (Docker)
 1. `docker compose up --build`
 2. Abrir Swagger: http://localhost:8080/swagger-ui/index.html
 3. Fazer login em `/api/v1/auth/login` (admin / admin123)
 4. Clicar em **Authorize** e colar o `accessToken`
 5. Testar rotas de artistas/álbuns/capas.
 
----
+### Comandos essenciais (Docker Compose)
+- Subir tudo: `docker compose up --build`
+- Parar: `docker compose down`
+- Parar e limpar dados/volumes: `docker compose down -v && docker volume prune -f`
 
-## Como executar (com Docker Compose)
-
-```bash
-docker compose up --build
-```
-
-Servicos:
+Serviços:
 - API: http://localhost:8080
 - Swagger: http://localhost:8080/swagger-ui/index.html
 - MinIO Console: http://localhost:9001 (user: minioadmin / pass: minioadmin)
@@ -86,7 +83,7 @@ Arquitetura adotada: **camadas** com agrupamento por domínio
 - Domínios separados (album, artist, regional) e módulos transversais (auth, security, storage, websocket)  
 - Configurações e concerns comuns isolados (health, shared)
 
-### Passo a passo
+### Passo a passo rápido (Docker)
 1) Instale Docker Desktop e deixe rodando.  
 2) No diretório do projeto, execute: `docker compose up --build`  
 3) Aguarde os containers subirem (API, DB, MinIO).  

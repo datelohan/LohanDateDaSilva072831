@@ -5,6 +5,22 @@ API REST para gerenciamento de **artistas** e **albuns**, com seguranca JWT, upl
 
 ---
 
+## Índice rápido
+- [Stack e tecnologias](#stack-e-tecnologias)
+- [Pré-requisitos](#pre-requisitos)
+- [Clonar o projeto](#clonar-o-projeto)
+- [Rodar em 60 segundos (Docker)](#rodar-em-60-segundos-docker)
+- [Execução detalhada](#como-executar-com-docker-compose)
+- [Execução local sem Docker](#como-executar-local-sem-docker)
+- [Autenticação (login/refresh)](#autenticacao)
+- [Endpoints principais](#endpoints-principais)
+- [Testes](#como-rodar-testes)
+- [Troubleshooting](#troubleshooting)
+- [Arquitetura](#arquitetura-adotada)
+- [Observacoes finais](#observacoes-finais)
+
+---
+
 ## Stack e tecnologias
 - Java 21 + Spring Boot 4
 - Spring Data JPA + MySQL 8.4
@@ -15,6 +31,24 @@ API REST para gerenciamento de **artistas** e **albuns**, com seguranca JWT, upl
 - OpenAPI/Swagger
 - Docker + Docker Compose
 - Testes unitarios (JUnit + Mockito)
+
+## Pre-requisitos
+- Git
+- Docker Desktop (ou Docker Engine + Docker Compose)
+- JDK 21 instalado **somente se quiser rodar sem Docker** (o build via Docker usa a imagem do Maven e não precisa de JDK local)
+
+## Clonar o projeto
+```bash
+git clone https://github.com/datelohan/LohanDateDaSilva072831.git
+cd LohanDateDaSilva072831
+```
+
+## Rodar  (Docker)
+1. `docker compose up --build`
+2. Abrir Swagger: http://localhost:8080/swagger-ui/index.html
+3. Fazer login em `/api/v1/auth/login` (admin / admin123)
+4. Clicar em **Authorize** e colar o `accessToken`
+5. Testar rotas de artistas/álbuns/capas.
 
 ---
 
@@ -60,6 +94,13 @@ Arquitetura adotada: **camadas** com agrupamento por domínio
 5) Faça login em `/api/v1/auth/login` (admin / admin123) e clique em **Authorize** com o access token.  
 6) Use as rotas de artistas/álbuns normalmente.  
 7) Para sair, `docker compose down` (use `-v` se quiser limpar volumes/dados).
+   - Se já existirem volumes antigos e der erro de migration (tabelas já existem), use:
+     ```
+     docker compose down -v
+     docker volume prune -f
+     docker compose up --build
+     ```
+     Isso remove volumes/imagens antigos e recria o banco do zero.
 
 ---
 
@@ -102,6 +143,24 @@ Para consumir rotas protegidas, envie:
 Authorization: Bearer <accessToken>
 ```
 
+Exemplos rápidos (curl)
+```bash
+# Login
+curl -X POST http://localhost:8080/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+
+# Refresh
+curl -X POST http://localhost:8080/api/v1/auth/refresh \
+  -H "Content-Type: application/json" \
+  -d '{"refreshToken":"<token>"}'
+
+# Upload de capa (album id=2)
+curl -X POST http://localhost:8080/api/v1/albums/2/covers \
+  -H "Authorization: Bearer <accessToken>" \
+  -F "files=@/caminho/para/imagem.jpeg;type=image/jpeg"
+```
+
 ---
 
 ## Endpoints principais 
@@ -138,10 +197,6 @@ Topico: `/topic/albums`
 - `POST /api/v1/regionais/sync` – sincroniza com o endpoint oficial  
 - `GET /api/v1/regionais?ativo=true|false` – lista filtrando por status
 
-### Health checks
-- `GET /api/v1/health/liveness`
-- `GET /api/v1/health/readiness`
-
 ---
 
 ## Regras importantes atendidas
@@ -168,6 +223,28 @@ Testes incluidos:
 - `AlbumServiceTest` (criar album + erro de artista inexistente)
 - `ArtistServiceTest` (filtros por nome/tipo chamando o repositório correto)
 
+Rodar testes dentro do container (sem dependências locais):
+```bash
+docker compose run --rm api ./mvnw test
+```
+
+---
+
+## Troubleshooting
+- **Porta 8080 em uso**: descubra o processo e libere ou mude a porta no `docker-compose.yml`.
+  ```bash
+  lsof -i :8080
+  ```
+- **Erro Flyway (tabelas já existem / schema sujo)**: limpar volumes e subir de novo.
+  ```bash
+  docker compose down -v
+  docker volume prune -f
+  docker compose up --build
+  ```
+- **URL de capa não abre fora do contêiner**: use `http://localhost:9000` no navegador (fora do Docker) e confirme `MINIO_PUBLIC_ENDPOINT` no compose.
+- **Assinatura MinIO (SignatureDoesNotMatch)**: tokens presigned expiram em 30 min; gere nova URL com o `GET /api/v1/albums/{id}/covers`.
+- **CORS bloqueando origem**: ajuste `security.allowed-origins` em `application.yaml`.
+
 ---
 
 ## Migrations (Flyway)
@@ -187,3 +264,17 @@ Arquivos em `src/main/resources/db/migration`:
 - Nao ha endpoints de DELETE porque o edital nao solicitou.  
 - Se o endpoint de regionais estiver fora, a aplicacao **nao falha** no startup.
 
+## Arquitetura adotada
+Camadas + separação por domínio:
+```
+Controller (REST / WebSocket)
+   ↓
+Service (regras de negócio, integração MinIO, rate limit)
+   ↓
+Repository (Spring Data JPA)
+   ↓
+MySQL (dados) | MinIO (capas) | WebSocket broker
+
+Domínios: auth, artist, album, regional
+Transversais: security, storage, websocket, health, shared
+```

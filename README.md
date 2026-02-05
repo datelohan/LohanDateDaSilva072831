@@ -83,7 +83,7 @@ Arquitetura adotada: **camadas** com agrupamento por domínio
 - Domínios separados (album, artist, regional) e módulos transversais (auth, security, storage, websocket)  
 - Configurações e concerns comuns isolados (health, shared)
 
-### Passo a passo rápido (Docker)
+## Passo a passo rápido (Docker)
 1) Instale Docker Desktop e deixe rodando.  
 2) No diretório do projeto, execute: `docker compose up --build`  
 3) Aguarde os containers subirem (API, DB, MinIO).  
@@ -101,10 +101,6 @@ Arquitetura adotada: **camadas** com agrupamento por domínio
 
 ---
 
-## Como executar local (sem Docker)
-
-1) Suba MySQL e MinIO (pode usar apenas os containers de `docker compose` para isso)  
-2) Rode a API:
 
 ```bash
 ./mvnw spring-boot:run
@@ -260,6 +256,11 @@ Arquivos em `src/main/resources/db/migration`:
 - Refresh: cada chamada a `/auth/refresh` gera um novo par de tokens; guarde o refresh mais recente.  
 - Nao ha endpoints de DELETE porque o edital nao solicitou.  
 - Se o endpoint de regionais estiver fora, a aplicacao **nao falha** no startup.
+
+## Dados do candidato
+- Nome: **Lohan Date Da Silva**
+- Inscrição: **16433**
+- Processo seletivo: **Seplag nº 001/2026**
 
 ## Arquitetura adotada
 Camadas + separação por domínio:
